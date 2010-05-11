@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * A class that contains seperated and aggragated workers and status data from all gearman server in a cluster
+ * @author liorbk
+ *
+ */
 class GearmanClusterAdmin
 {
 	private $accumaltiveJobs = array();
@@ -104,6 +109,9 @@ class GearmanHost
 	private $jobs = array();
 	private $workers = array();
 	
+	private $rawStatus;
+	private $rawWorkers;
+	
 	const WORKER_AVAILABLE = "AVAILABLE";
 	const WORKER_RUNNING = "RUNNING";
 	const WORKER_TOTAL = "TOTAL";
@@ -127,6 +135,13 @@ class GearmanHost
 		
 		if ($port != null)
 			$this->port = $port;
+			
+		$gearman_telnet = new GearmanTelnet($this->host, $this->port);
+		$this->rawStatus = $gearman_telnet->getStatus();
+		$this->rawStatus = explode(PHP_EOL, $this->rawStatus);
+		
+		$this->rawWorkers = $gearman_telnet->getWorkers();
+		$this->rawWorkers = explode(PHP_EOL, $this->rawWorkers);		
 				
 		$this->initWorkers();
 		$this->initJobs();
@@ -151,11 +166,8 @@ class GearmanHost
 	
 	private function initJobs()
 	{
-		$this->workers = $this->getWorkers();
-		
-		$gearman_telnet = new GearmanTelnet($this->host, $this->port);
-		$status = $gearman_telnet->getStatus();
-		$status = explode(PHP_EOL, $status);
+		$this->workers = $this->getWorkers();			
+		$status = $this->rawStatus;
 		
 		for($i=0; $i<count($status); $i++)
 		{
@@ -186,10 +198,8 @@ class GearmanHost
 	}
 	
 	private function initWorkers()
-	{
-		$gearman_telnet = new GearmanTelnet($this->host, $this->port);
-		$workers = $gearman_telnet->getWorkers();
-		$workers = explode(PHP_EOL, $workers);
+	{		
+		$workers = $this->rawWorkers;
 		
 		$this->workers[self::FACER_WORKER] = array(
 										GearmanHost::WORKER_AVAILABLE => 0,
