@@ -84,7 +84,7 @@ class GearmanClusterAdmin
 				$free = $worker[GearmanHost::WORKER_AVAILABLE];
 				$queued = $worker[GearmanHost::WORKER_QUEUED];
 							
-				if (!isset($accumaltiveWorkers[$type]))
+				if (!isset($this->accumaltiveWorkers[$type]))
 				{
 					$this->accumaltiveWorkers[$type][GearmanHost::WORKER_TOTAL] = 0;
 					$this->accumaltiveWorkers[$type][GearmanHost::WORKER_RUNNING] = 0;
@@ -94,9 +94,13 @@ class GearmanClusterAdmin
 				
 				$this->accumaltiveWorkers[$type][GearmanHost::WORKER_TOTAL] = max($available, $this->accumaltiveWorkers[$type][GearmanHost::WORKER_TOTAL]);
 				$this->accumaltiveWorkers[$type][GearmanHost::WORKER_RUNNING] += $running;		
-				$this->accumaltiveWorkers[$type][GearmanHost::WORKER_QUEUED] += $queued;
+				$this->accumaltiveWorkers[$type][GearmanHost::WORKER_QUEUED] += $queued;											
 			}
 			
+			foreach ($this->accumaltiveWorkers as $type => $worker)
+			{ 
+				$this->accumaltiveWorkers[$type][GearmanHost::WORKER_AVAILABLE] = ($worker[GearmanHost::WORKER_TOTAL] - $worker[GearmanHost::WORKER_RUNNING]);			
+			}			
 		}
 						
 	}
