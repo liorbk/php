@@ -1,6 +1,21 @@
 <?php
 
 /**
+* Monitoring Gearman over telnet port 4730
+*
+* So the only way to monitor Gearman is via doing a telnet to port 4730. The
+* current monitoring supported commands are fairly basic.
+* There are plans to include more set of commands in the next release.
+*
+* BigTent Design, Inc.
+*
+* @category BigTent
+* @package GearmanTelnet
+* @copyright Copyright (c) 2009 BigTent Design, Inc. (http://www.bigtent.com)
+* @version 1.1 (Modified by Lior Ben-Kereth)
+*/
+
+/**
  * A class that contains seperated and aggragated workers and status data from all gearman server in a cluster
  * @author liorbk
  *
